@@ -42,6 +42,7 @@ const authUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ email });
 
+  console.log(user, await user.matchPassword(password));
   if (user && (await user.matchPassword(password))) {
     res.json({
       _id: user._id,
@@ -52,7 +53,7 @@ const authUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(400);
-    throw new Error("Failed to Create the User");
+    throw new Error("Invalid email or password");
   }
 });
 module.exports = { registerUser, authUser };
