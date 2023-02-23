@@ -19,6 +19,8 @@ userModel.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
+//Before saving the user to the database the following code will encrypt the password
+
 userModel.pre("save", async function (next) {
   //pre and post hooks
   if (!this.isModified) {
