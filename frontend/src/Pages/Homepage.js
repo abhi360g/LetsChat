@@ -8,11 +8,22 @@ import {
   TabPanels,
   TabPanel,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import Login from "../components/Authentication/Login";
 import Signup from "../components/Authentication/Signup";
 
 const Homepage = () => {
+  const history = useHistory();
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+
+    if (user) {
+      history.push("/chats");
+    }
+  }, [history]); //Whenever history is updated useEffect is called
+  // localStorage.clear();
+
   return (
     <Container maxW="xl">
       <Box
