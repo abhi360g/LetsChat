@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const colors = require("colors");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 dotenv.config(); //calling the .env file and loading the environment variables
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/user", userRoutes); // Abstracting routes logic in userRoutes
 app.use("/api/chat", chatRoutes); // Abstracting routes logic in chatRoutes
+app.use("/api/message", messageRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
