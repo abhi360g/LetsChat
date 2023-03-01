@@ -17,10 +17,16 @@ import UpdateGroupChatModal from "./misc/UpdateGroupChatModal";
 import ScrollableChat from "./ScrollableChat";
 import "./styles.css";
 
+import io from "socket.io-client";
+
+const ENDPOINT = "http://localhost:8000";
+var socket, selectedChatCompare;
+
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState();
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const toast = useToast();
   const { user, selectedChat, setSelectedChat } = ChatState();
@@ -47,6 +53,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
       setMessages(data);
       setLoading(false);
+      socket.emit("join chat", selectedChat._id); //We are creating a new room with the id of this chat
     } catch (error) {
       toast({
         title: "Error occured!",
@@ -60,8 +67,28 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connection", () => setSocketConnected(true));
+  }, []);
+
+  useEffect(() => {
     fetchMessages();
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
+
+  useEffect(() => {
+    socket.on("message received", (newMessageReceived) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageReceived.chat._id
+      ) {
+        //give notification
+      } else {
+        setMessages([...messages, newMessageReceived]);
+      }
+    });
+  });
 
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
@@ -84,7 +111,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         );
 
         // console.log(data);
-
+        socket.emit("new message", data);
         setMessages([...messages, data]);
       } catch (error) {
         toast({
