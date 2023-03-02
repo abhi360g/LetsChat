@@ -21,7 +21,8 @@ import animationData from "../animations/typing.json";
 
 import io from "socket.io-client";
 
-const ENDPOINT = "http://localhost:8000";
+// const ENDPOINT = "http://localhost:8000";1
+const ENDPIONT = "https://mern-letschat-app.herokuapp.com/";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
